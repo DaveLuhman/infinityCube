@@ -53,10 +53,10 @@ function uniqueWord(wordToCheck, wordArray) {
  * @param {array} wordArray
  * @return {boolean}
  */
-function iterateUniqueCheck(wordArray) {
+function iUniqueWord(wordArray) {
   for (let i = 0; i < wordArray.length; i++) {
     const word = wordArray[i];
-    if (uniqueWord(word, wordArray[i + 1]) == false) return false;
+    if (uniqueWord(word, wordArray) == false) return false;
   }
   return true;
 }
@@ -64,8 +64,6 @@ function main() {
   let resultArray = [];
   const wordList = prepareDictionary(dictionary);
   for (let i = 0; i < wordList.length; i++) {
-    let topForLoopCount;
-    topForLoopCount++;
     let abcd = wordList[i];
     let abcdArray = splitWord(abcd);
     var A = abcdArray[0];
@@ -85,15 +83,25 @@ function main() {
       let wordFour = C + D + H + G;
       let wordFive = F + E + A + B;
       let wordSix = G + H + D + C;
-      const wordArray = [wordOne, wordTwo, wordThree, wordFour];
-      if (wordList.includes(wordThree) && wordList.includes(wordFour)) {
+      const wordArray = [
+        wordOne,
+        wordTwo,
+        wordThree,
+        wordFour,
+        wordFive,
+        wordSix,
+      ];
+      if (
+        (wordList.includes(wordThree) && wordList.includes(wordFour),
+        wordList.includes(wordFive) && wordList.includes(wordSix) && iUniqueWord(wordArray))
+      ) {
         console.log(wordArray + " is a valid combination");
         resultArray.push(wordArray);
       }
     }
   }
-      fs.writeFileSync("./result.csv", JSON.stringify(resultArray));
-      return resultArray.length;
+  fs.writeFileSync("./result.csv", JSON.stringify(resultArray));
+  return resultArray.length;
 }
 main();
 
