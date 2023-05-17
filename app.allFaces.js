@@ -1,10 +1,9 @@
 const fs = require("fs");
 const path = require("path");
+const query = require("cli-interact").getYesNo;
+
 // loads dictionary file to memory
-const dictionary = fs.readFileSync(
-  path.join(__dirname, "wordList.10000"),
-  "utf8"
-);
+const dictionary = fs.readFileSync(path.join(__dirname, "gcide.txt"), "utf8");
 /**
  *
  * @param {string} dictionary new-line separated list of words
@@ -12,10 +11,10 @@ const dictionary = fs.readFileSync(
  */
 function prepareDictionary(dictionary) {
   let fourLetterWordList = [];
-  const dictionaryArray = dictionary.split("\n");
+  const dictionaryArray = dictionary.split("\r\n");
   for (let i = 0; i < dictionaryArray.length; i++) {
     if (dictionaryArray[i].length === 4) {
-      fourLetterWordList.push(dictionaryArray[i]);
+      fourLetterWordList.push(dictionaryArray[i].toLowerCase());
     }
   }
   return fourLetterWordList;
@@ -93,11 +92,17 @@ function main() {
       ];
       if (
         (wordList.includes(wordThree) && wordList.includes(wordFour),
-        wordList.includes(wordFive) && wordList.includes(wordSix) && iUniqueWord(wordArray))
+        wordList.includes(wordFive) &&
+          wordList.includes(wordSix) &&
+          iUniqueWord(wordArray))
       ) {
         console.log(wordArray + " is a valid combination");
         resultArray.push(wordArray);
       }
+    }
+    if (i % 100 == 0) {
+      let qContinue = query('2500 combinations have been tested.' + resultArray.length + ' good combinations have been found. Continue?');
+      if ((qContinue.answer = false)) return process.exitCode = 1;
     }
   }
   fs.writeFileSync("./result.csv", JSON.stringify(resultArray));

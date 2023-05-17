@@ -11,5 +11,8 @@
     "url": "github.com/daveluhman/infinitycube"
   },
   "author": "Dave Luhman",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "cli-interact": "^0.1.9"
+  }
 }
