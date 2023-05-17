@@ -1,11 +1,9 @@
 const fs = require("fs");
 const path = require("path");
-
-
 // loads dictionary file to memory
 const dictionary = fs.readFileSync(
-    path.join(__dirname, "wordList.1000"),
-    "utf8"
+  path.join(__dirname, "wordList.10000"),
+  "utf8"
 );
 /**
  *
@@ -13,14 +11,14 @@ const dictionary = fs.readFileSync(
  * @returns {array} list of four-letter words
  */
 function prepareDictionary(dictionary) {
-    let fourLetterWordList = [];
-    const dictionaryArray = dictionary.split("\n");
-    for (let i = 0; i < dictionaryArray.length; i++) {
-        if (dictionaryArray[i].length === 4) {
-            fourLetterWordList.push(dictionaryArray[i]);
-        }
+  let fourLetterWordList = [];
+  const dictionaryArray = dictionary.split("\n");
+  for (let i = 0; i < dictionaryArray.length; i++) {
+    if (dictionaryArray[i].length === 4) {
+      fourLetterWordList.push(dictionaryArray[i]);
     }
-    return fourLetterWordList;
+  }
+  return fourLetterWordList;
 }
 
 /**
@@ -29,8 +27,8 @@ function prepareDictionary(dictionary) {
  * @returns {array} word as array of letters
  */
 function splitWord(word) {
-    //   console.log(word);
-    return word.toLowerCase().split(""); // now it should look like ['d', 'a', 'v', 'e']
+  //   console.log(word);
+  return word.toLowerCase().split(""); // now it should look like ['d', 'a', 'v', 'e']
 }
 
 /**
@@ -40,14 +38,14 @@ function splitWord(word) {
  * @returns
  */
 function uniqueWord(wordToCheck, wordArray) {
-    let count = 0;
-    for (let i = 0; i < wordArray.length; i++) {
-        if (wordToCheck == wordArray[i]) {
-            count++;
-        }
-        if (count > 1) return false;
+  let count = 0;
+  for (let i = 0; i < wordArray.length; i++) {
+    if (wordToCheck == wordArray[i]) {
+      count++;
     }
-    return true;
+    if (count > 1) return false;
+  }
+  return true;
 }
 
 /**
@@ -56,53 +54,52 @@ function uniqueWord(wordToCheck, wordArray) {
  * @return {boolean}
  */
 function iterateUniqueCheck(wordArray) {
-    for (let i = 0; i < wordArray.length; i++) {
-        const word = wordArray[i];
-        if (uniqueWord(word, wordArray[i + 1]) == false) return false;
-    }
-    return true;
+  for (let i = 0; i < wordArray.length; i++) {
+    const word = wordArray[i];
+    if (uniqueWord(word, wordArray[i + 1]) == false) return false;
+  }
+  return true;
 }
 function main() {
-    let resultArray = [];
-    const wordList = prepareDictionary(dictionary);
-    for (let i = 0; i < wordList.length; i++) {
-        let abcd = wordList[i];
-        let abcdArray = splitWord(abcd);
-        var A = abcdArray[0];
-        var B = abcdArray[1];
-        var C = abcdArray[2];
-        var D = abcdArray[3];
-        for (let x = 0; x < wordList.length; x++) {
-            let efgh = wordList[x];
-            let efghArray = splitWord(efgh);
-            let E = efghArray[0];
-            let F = efghArray[1];
-            let G = efghArray[2];
-            let H = efghArray[3];
-            let wordOne = abcd;
-            let wordTwo = efgh;
-            let wordThree = B + A + E + F;
-            let wordFour = C + D + H + G;
-            // let wordFive = F + E + A + B;
-            // let wordSix = G + H + D + C;
-            const wordArray =
-                [wordOne, wordTwo, wordThree, wordFour]
-            if (wordList.includes(wordThree) &&
-                wordList.includes(wordFour)
-            ) {
-                resultArray.push(wordArray);
-            }
-            console.log(wordArray + ' is not a valid combination')
-        }
-        fs.writeFileSync("./result.csv", JSON.stringify(resultArray));
-        return resultArray.length;
+  let resultArray = [];
+  const wordList = prepareDictionary(dictionary);
+  for (let i = 0; i < wordList.length; i++) {
+    let topForLoopCount;
+    topForLoopCount++;
+    let abcd = wordList[i];
+    let abcdArray = splitWord(abcd);
+    var A = abcdArray[0];
+    var B = abcdArray[1];
+    var C = abcdArray[2];
+    var D = abcdArray[3];
+    for (let x = 0; x < wordList.length; x++) {
+      let efgh = wordList[x];
+      let efghArray = splitWord(efgh);
+      let E = efghArray[0];
+      let F = efghArray[1];
+      let G = efghArray[2];
+      let H = efghArray[3];
+      let wordOne = abcd;
+      let wordTwo = efgh;
+      let wordThree = B + A + E + F;
+      let wordFour = C + D + H + G;
+      let wordFive = F + E + A + B;
+      let wordSix = G + H + D + C;
+      const wordArray = [wordOne, wordTwo, wordThree, wordFour];
+      if (wordList.includes(wordThree) && wordList.includes(wordFour)) {
+        console.log(wordArray + " is a valid combination");
+        resultArray.push(wordArray);
+      }
     }
+  }
+      fs.writeFileSync("./result.csv", JSON.stringify(resultArray));
+      return resultArray.length;
 }
-main()
-console.info(
-    "Found " + (main().length || 0) + " possible combinations, saved in ./result.csv"
-);
+main();
 
+console.info(
+  "Found " + (main() || 0) + " possible combinations, saved in ./result.csv"
+);
 
 // const arrayNumberedFaces = [
 //   [A1, B1, C1, D1],
