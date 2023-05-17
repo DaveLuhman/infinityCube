@@ -1,11 +1,17 @@
 const fs = require("fs");
 const path = require("path");
 
+
+// loads dictionary file to memory
 const dictionary = fs.readFileSync(
   path.join(__dirname, "wordlist.10000"),
   "utf8"
 );
-
+/**
+ *
+ * @param {string} dictionary new-line separated list of words
+ * @returns {array} list of four-letter words
+ */
 function prepareDictionary(dictionary) {
   let fourLetterWordList = [];
   const dictionaryArray = dictionary.split("\n");
@@ -17,37 +23,47 @@ function prepareDictionary(dictionary) {
   return fourLetterWordList;
 }
 
+/**
+ *
+ * @param {string} word
+ * @returns {array} word as array of letters
+ */
 function splitWord(word) {
   //   console.log(word);
   return word.toLowerCase().split(""); // now it should look like ['d', 'a', 'v', 'e']
 }
 
-// Actual Implementation:
-
-function nestedIterator(nestedWord) {
-  const nestedWordAsArray = splitWord(nestedWord);
-  const E1 = nestedWordAsArray[0];
-  const F1 = nestedWordAsArray[1];
-  const G1 = nestedWordAsArray[2];
-  const H1 = nestedWordAsArray[3];
-  let newWordOne = B1 + A1 + E1 + F1;
-  let newWordTwo = C1 + D1 + H1 + G1;
-  if (wordList.includes(newWordOne) && wordList.includes(newWordTwo)) {
-    console.log(newWordOne + " " + newWordTwo);
-    return { "Word One": newWordOne, "Word Two": newWordTwo };
+/**
+ *
+ * @param {string} wordToCheck
+ * @param {array} wordArray
+ * @returns
+ */
+function uniqueWord(wordToCheck, wordArray) {
+  let count = 0;
+  for (let i = 0; i < wordArray.length; i++) {
+    if (wordToCheck == wordArray[i]) {
+      count++;
+    }
+    if (count > 1) return false;
   }
-}
-function topLevelIterator(wordList) {
-  const wordAsArray = splitWord(ABCD);
-  var A1 = wordAsArray[0];
-  var B1 = wordAsArray[1];
-  var C1 = wordAsArray[2];
-  var D1 = wordAsArray[3];
-  wordList.forEach(nestedIterator(wordList));
+  return true;
 }
 
+/**
+ * iterates through words and returns true if they're unique to each other.
+ * @param {array} wordArray
+ * @return {boolean}
+ */
+function iterateUniqueCheck(wordArray) {
+  for (let i = 0; i < wordArray.length; i++) {
+    const word = wordArray[i];
+    if (uniqueWord(word, wordArray[i + 1]) == false) return false;
+  }
+  return true;
+}
 function main() {
-  let result = [];
+  let resultArray = [];
   const wordList = prepareDictionary(dictionary);
   for (let i = 0; i < wordList.length; i++) {
     let abcd = wordList[i];
@@ -63,21 +79,38 @@ function main() {
       let F = efghArray[1];
       let G = efghArray[2];
       let H = efghArray[3];
-      let wordOne = abcd
-      let wordTwo = efgh
+      let wordOne = abcd;
+      let wordTwo = efgh;
       let wordThree = B + A + E + F;
       let wordFour = C + D + H + G;
       let wordFive = F + E + A + B;
       let wordSix = G + H + D + C;
-      if (wordList.includes(wordThree) && wordList.includes(wordFour) && wordList.includes(wordFive) && wordList.includes(wordSix)) {
-      }
-      result.push([wordOne, wordTwo, wordThree, wordFour, wordFive, wordSix]);
+      const wordArray =
+        wordOne + wordTwo + wordThree + wordFour + wordFive + wordSix;
+      if (
+        (wordList.includes(wordThree) &&
+        wordList.includes(wordFour) &&
+        wordList.includes(wordFive) &&
+        wordList.includes(wordSix)) &&
+        iterateUniqueCheck(wordArray)
+      ) {
+      resultArray.push([
+        wordOne,
+        wordTwo,
+        wordThree,
+        wordFour,
+        wordFive,
+        wordSix,
+      ]);
     }
-    fs.writeFileSync("./result.csv", JSON.stringify(result));
+    fs.writeFileSync("./result.csv", JSON.stringify(resultArray));
   }
   return result.length;
 }
-console.info('Found ' + main() + ' possible combinations, saved in ./result.csv');
+console.info(
+  "Found " + main() + " possible combinations, saved in ./result.csv"
+);
+}
 
 // const arrayNumberedFaces = [
 //   [A1, B1, C1, D1],
