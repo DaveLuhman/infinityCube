@@ -3,7 +3,14 @@ const path = require("path");
 const query = require("cli-interact").getYesNo;
 
 // loads dictionary file to memory
-const dictionary = fs.readFileSync(path.join(__dirname, "gcide.txt"), "utf8");
+const bigDictionary = fs.readFileSync(
+  path.join(__dirname, "./oxford.wordlist"),
+  "utf8"
+);
+const commonDictionary = fs.readFileSync(
+  path.join(__dirname, "./wordlist.10000"),
+  "utf8"
+);
 /**
  *
  * @param {string} dictionary new-line separated list of words
@@ -11,7 +18,7 @@ const dictionary = fs.readFileSync(path.join(__dirname, "gcide.txt"), "utf8");
  */
 function prepareDictionary(dictionary) {
   let fourLetterWordList = [];
-  const dictionaryArray = dictionary.split("\r\n");
+  const dictionaryArray = dictionary.replaceAll(" ", "").split("\r\n");
   for (let i = 0; i < dictionaryArray.length; i++) {
     if (dictionaryArray[i].length === 4) {
       fourLetterWordList.push(dictionaryArray[i].toLowerCase());
@@ -61,16 +68,18 @@ function iUniqueWord(wordArray) {
 }
 function main() {
   let resultArray = [];
-  const wordList = prepareDictionary(dictionary);
-  for (let i = 0; i < wordList.length; i++) {
-    let abcd = wordList[i];
+  const sourceWordList = prepareDictionary(bigDictionary);
+  const commonWordList = prepareDictionary(commonDictionary);
+  console.log("the word list contains " + sourceWordList.length + " options.");
+  for (let i = 0; i < sourceWordList.length; i++) {
+    let abcd = sourceWordList[i];
     let abcdArray = splitWord(abcd);
     var A = abcdArray[0];
     var B = abcdArray[1];
     var C = abcdArray[2];
     var D = abcdArray[3];
-    for (let x = 0; x < wordList.length; x++) {
-      let efgh = wordList[x];
+    for (let x = 0; x < sourceWordList.length; x++) {
+      let efgh = sourceWordList[x];
       let efghArray = splitWord(efgh);
       let E = efghArray[0];
       let F = efghArray[1];
@@ -91,19 +100,32 @@ function main() {
         wordSix,
       ];
       if (
-        (wordList.includes(wordThree) && wordList.includes(wordFour),
-        wordList.includes(wordFive) &&
-          wordList.includes(wordSix) &&
-          iUniqueWord(wordArray))
+        (commonWordList.includes(wordThree) &&
+          commonWordList.includes(wordFour) &&
+        commonWordList.includes(wordFive) &&
+          commonWordList.includes(wordSix)) &&
+          iUniqueWord(wordArray)
       ) {
         console.log(wordArray + " is a valid combination");
         resultArray.push(wordArray);
       }
     }
-    if (i % 100 == 0) {
-      let qContinue = query('2500 combinations have been tested.' + resultArray.length + ' good combinations have been found. Continue?');
-      if ((qContinue.answer = false)) return process.exitCode = 1;
-    }
+    // if ((i + 1) % 1000 == 0) {
+    //   let qContinue = query(
+    //     "100 top level words have been tested." +
+    //       resultArray.length +
+    //       "  good combinations have been found. Continue?"
+    //   );
+    //   if (qContinue === false) {
+    //     fs.writeFileSync("./result.csv", JSON.stringify(resultArray));
+    //     console.info(
+    //       "Found " +
+    //         (resultArray.length || 0) +
+    //         " possible combinations, saved in ./result.csv"
+    //     );
+    //     throw new Error("User Terminated");
+    //   }
+    // }
   }
   fs.writeFileSync("./result.csv", JSON.stringify(resultArray));
   return resultArray.length;
