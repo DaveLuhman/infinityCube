@@ -4,7 +4,7 @@ const query = require("cli-interact").getYesNo;
 
 // loads dictionary file to memory
 const bigDictionary = fs.readFileSync(
-  path.join(__dirname, "./oxford.wordlist"),
+  path.join(__dirname, "./gcide.txt"),
   "utf8"
 );
 const commonDictionary = fs.readFileSync(
